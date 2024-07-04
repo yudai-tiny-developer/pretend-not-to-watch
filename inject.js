@@ -48,15 +48,17 @@ if (_pretend_not_to_watch_app) {
         iframe.onload = () => {
             let mutation_count = 0;
             new MutationObserver((mutations, observer) => {
-                if (mutation_count++ < 2) {
+                if (mutation_count++ < 3) {
                     if (click_remove_history_button(iframe, video_data.video_id)) {
                         observer.disconnect();
                         document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_succeeded'));
                         open_toast(e.detail.toast);
+                    } else {
+                        console.log('video not found from watch history');
                     }
                 } else {
-                    if (reload_count++ < 4) {
-                        console.log('watch history reloading');
+                    if (reload_count++ < 3) {
+                        console.log('reloading watch history');
                         observer.disconnect();
                         iframe.contentWindow.location.reload();
                     } else {
