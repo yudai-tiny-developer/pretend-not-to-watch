@@ -1,5 +1,11 @@
 {
     "appDesc": {
-        "message": "Pretend not to watch"
+        "message": "This extension adds a button to YouTube Player that removes the view of current video from your watch history."
+    },
+    "button": {
+        "message": "Remove from watch history"
+    },
+    "toast": {
+        "message": "The view of this video has been removed from history."
     }
 }

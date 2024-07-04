@@ -27,16 +27,20 @@ function main(app, common) {
 
             const button = document.createElement('button');
             button.id = '_pretend_not_to_watch';
-            button.innerHTML = 'Pretend not to watch';
+            button.innerHTML = common.label.button;
             button.classList.add(
                 'yt-spec-button-shape-next',
                 'yt-spec-button-shape-next--tonal',
-                //'yt-spec-button-shape-next--filled',
                 'yt-spec-button-shape-next--mono',
                 'yt-spec-button-shape-next--size-m'
             );
             button.addEventListener('click', () => {
-                document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_request'));
+                const detail = {
+                    toast: common.label.toast
+                };
+                document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_request', { detail }));
+
+                button.innerHTML = '<div class="ytp-spinner" data-layer="4" style="display: block; left: 36px; top: auto; width: 28px; height: 28px"><div class="ytp-spinner-container"><div class="ytp-spinner-rotator"><div class="ytp-spinner-left"><div class="ytp-spinner-circle"></div></div><div class="ytp-spinner-right"><div class="ytp-spinner-circle"></div></div></div></div></div>' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + common.label.button;
             });
 
             const div = document.createElement('div');
@@ -56,6 +60,32 @@ function main(app, common) {
             }
         }).observe(app, { childList: true, subtree: true });
         loadSettings();
+    });
+
+    document.addEventListener('_pretend_not_to_watch_succeeded', e => {
+        const button = app.querySelector('button#_pretend_not_to_watch');
+        if (button) {
+            button.innerHTML = '✔ ' + common.label.button;
+            button.classList.remove('yt-spec-button-shape-next--tonal');
+            button.classList.add('yt-spec-button-shape-next--filled');
+        }
+    });
+
+    document.addEventListener('_pretend_not_to_watch_timeout', e => {
+        const button = app.querySelector('button#_pretend_not_to_watch');
+        if (button) {
+            button.innerHTML = common.label.button;
+        }
+    });
+
+    document.addEventListener('yt-navigate-finish', e => {
+        const button = app.querySelector('button#_pretend_not_to_watch');
+        if (button) {
+            button.innerHTML = common.label.button;
+
+            button.classList.remove('yt-spec-button-shape-next--filled');
+            button.classList.add('yt-spec-button-shape-next--tonal');
+        }
     });
 
     const s = document.createElement('script');
