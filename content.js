@@ -5,6 +5,9 @@ import(chrome.runtime.getURL('common.js')).then(common => {
 });
 
 function main(app, common) {
+    const TRASH = '<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24" focusable="false" style="pointer-events: none; display: inherit; width: 24px; height: 24px;"><path d="M11 17H9V8h2v9zm4-9h-2v9h2V8zm4-4v1h-1v16H6V5H5V4h4V3h6v1h4zm-2 1H7v15h10V5z"></path></svg>';
+    const LOADING = '<div class="ytp-spinner" data-layer="4" style="display: block; position: relative; width: 26px; height: 26px; left: 0px; top: 0px; margin: auto;"><div class="ytp-spinner-container" style="left: 25%;"><div class="ytp-spinner-rotator"><div class="ytp-spinner-left"><div class="ytp-spinner-circle" style="border-width: 4px;"></div></div><div class="ytp-spinner-right"><div class="ytp-spinner-circle" style="border-width: 4px;"></div></div></div></div></div>';
+
     function loadSettings() {
         create_history_iframe();
         create_button();
@@ -25,9 +28,16 @@ function main(app, common) {
         if (area) {
             area.querySelectorAll('button#_pretend_not_to_watch').forEach(b => b.remove());
 
+            const icon = document.createElement('div');
+            icon.id = '_pretend_not_to_watch_icon';
+            icon.classList.add('yt-spec-button-shape-next__icon');
+            icon.innerHTML = TRASH;
+
+            const text = document.createElement('div');
+            text.classList.add('yt-spec-button-shape-next__button-text-content');
+            text.innerHTML = common.label.button;
+
             const button = document.createElement('button');
-            button.id = '_pretend_not_to_watch';
-            button.innerHTML = common.label.button;
             button.classList.add(
                 'yt-spec-button-shape-next',
                 'yt-spec-button-shape-next--tonal',
@@ -40,8 +50,10 @@ function main(app, common) {
                 };
                 document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_request', { detail }));
 
-                button.innerHTML = '<div class="ytp-spinner" data-layer="4" style="display: block; left: 36px; top: auto; width: 28px; height: 28px"><div class="ytp-spinner-container"><div class="ytp-spinner-rotator"><div class="ytp-spinner-left"><div class="ytp-spinner-circle"></div></div><div class="ytp-spinner-right"><div class="ytp-spinner-circle"></div></div></div></div></div>' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + common.label.button;
+                icon.innerHTML = LOADING;
             });
+            button.appendChild(icon);
+            button.appendChild(text);
 
             const div = document.createElement('div');
             div.classList.add('style-scope', 'ytd-menu-renderer');
@@ -63,23 +75,23 @@ function main(app, common) {
     });
 
     document.addEventListener('_pretend_not_to_watch_succeeded', e => {
-        const button = app.querySelector('button#_pretend_not_to_watch');
-        if (button) {
-            button.innerHTML = common.label.button;
+        const icon = app.querySelector('div#_pretend_not_to_watch_icon');
+        if (icon) {
+            icon.innerHTML = TRASH;
         }
     });
 
     document.addEventListener('_pretend_not_to_watch_timeout', e => {
-        const button = app.querySelector('button#_pretend_not_to_watch');
-        if (button) {
-            button.innerHTML = common.label.button;
+        const icon = app.querySelector('div#_pretend_not_to_watch_icon');
+        if (icon) {
+            icon.innerHTML = TRASH;
         }
     });
 
     document.addEventListener('yt-navigate-finish', e => {
-        const button = app.querySelector('button#_pretend_not_to_watch');
-        if (button) {
-            button.innerHTML = common.label.button;
+        const icon = app.querySelector('div#_pretend_not_to_watch_icon');
+        if (icon) {
+            icon.innerHTML = TRASH;
         }
     });
 
