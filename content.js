@@ -65,9 +65,7 @@ function main(app, common) {
     document.addEventListener('_pretend_not_to_watch_succeeded', e => {
         const button = app.querySelector('button#_pretend_not_to_watch');
         if (button) {
-            button.innerHTML = '✔ ' + common.label.button;
-            button.classList.remove('yt-spec-button-shape-next--tonal');
-            button.classList.add('yt-spec-button-shape-next--filled');
+            button.innerHTML = common.label.button;
         }
     });
 
@@ -82,9 +80,6 @@ function main(app, common) {
         const button = app.querySelector('button#_pretend_not_to_watch');
         if (button) {
             button.innerHTML = common.label.button;
-
-            button.classList.remove('yt-spec-button-shape-next--filled');
-            button.classList.add('yt-spec-button-shape-next--tonal');
         }
     });
 
