@@ -44,26 +44,31 @@ if (_pretend_not_to_watch_app) {
             return;
         }
 
-        const interval = setInterval(() => {
-            iframe.contentWindow.location.reload();
-        }, 2000);
-
+        let reload_count = 0;
         iframe.onload = () => {
-            const observer = new MutationObserver((mutations, observer) => {
-                if (click_remove_history_button(iframe, video_data.video_id)) {
-                    clearInterval(interval);
-                    observer.disconnect();
-                    document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_succeeded'));
-                    open_toast(e.detail.toast);
+            let mutation_count = 0;
+            new MutationObserver((mutations, observer) => {
+                if (mutation_count++ < 2) {
+                    if (click_remove_history_button(iframe, video_data.video_id)) {
+                        observer.disconnect();
+                        document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_succeeded'));
+                        open_toast(e.detail.toast);
+                    }
+                } else {
+                    if (reload_count++ < 4) {
+                        console.log('watch history reloading');
+                        observer.disconnect();
+                        iframe.contentWindow.location.reload();
+                    } else {
+                        console.log('video not found from watch history');
+                        observer.disconnect();
+                        document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_timeout'));
+                    }
                 }
-            });
-            observer.observe(iframe.contentDocument, { childList: true, subtree: true });
-            setTimeout(() => {
-                clearInterval(interval);
-                observer.disconnect();
-                document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_timeout'));
-            }, 5000);
+            }).observe(iframe.contentDocument, { childList: true, subtree: true });
         };
+
+        iframe.contentWindow.location.reload();
     });
 
     document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_init'));
