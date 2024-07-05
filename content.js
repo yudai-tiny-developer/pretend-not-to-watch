@@ -19,6 +19,7 @@ function main(app, common) {
             iframe.id = '_pretend_not_to_watch';
             iframe.src = 'https://www.youtube.com/feed/history';
             iframe.loading = 'lazy';
+            iframe.style.visibility = 'hidden';
             document.body.appendChild(iframe);
         }
     }
