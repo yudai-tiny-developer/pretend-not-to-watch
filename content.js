@@ -55,7 +55,7 @@ function main(app, common) {
             button.appendChild(text);
 
             const div = document.createElement('div');
-            icon.id = '_pretend_not_to_watch';
+            div.id = '_pretend_not_to_watch';
             div.classList.add('style-scope', 'ytd-menu-renderer');
             div.style.marginRight = '8px';
             div.appendChild(button);
@@ -88,7 +88,7 @@ function main(app, common) {
         }
     });
 
-    document.addEventListener('yt-navigate-finish', e => {
+    document.addEventListener('yt-navigate-start', e => {
         const icon = app.querySelector('div#_pretend_not_to_watch_icon');
         if (icon) {
             icon.innerHTML = TRASH;
