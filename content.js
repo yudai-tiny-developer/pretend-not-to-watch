@@ -14,20 +14,18 @@ function main(app, common) {
     }
 
     function create_history_iframe() {
-        if (!window.parent.document.querySelector('iframe#_pretend_not_to_watch')) {
-            iframe = document.createElement('iframe');
-            iframe.id = '_pretend_not_to_watch';
-            iframe.src = 'https://www.youtube.com/feed/history';
-            iframe.loading = 'lazy';
-            iframe.style.visibility = 'hidden';
-            document.body.appendChild(iframe);
-        }
+        iframe = document.createElement('iframe');
+        iframe.id = '_pretend_not_to_watch';
+        iframe.src = 'https://www.youtube.com/feed/history';
+        iframe.loading = 'lazy';
+        iframe.style.visibility = 'hidden';
+        document.body.appendChild(iframe);
     }
 
     function create_button() {
         const area = app.querySelector('ytd-menu-renderer.ytd-watch-metadata');
         if (area) {
-            area.querySelectorAll('button#_pretend_not_to_watch').forEach(b => b.remove());
+            area.querySelectorAll('div#_pretend_not_to_watch_icon').forEach(b => b.remove());
 
             const icon = document.createElement('div');
             icon.id = '_pretend_not_to_watch_icon';
@@ -57,6 +55,7 @@ function main(app, common) {
             button.appendChild(text);
 
             const div = document.createElement('div');
+            icon.id = '_pretend_not_to_watch_icon';
             div.classList.add('style-scope', 'ytd-menu-renderer');
             div.style.marginRight = '8px';
             div.appendChild(button);
