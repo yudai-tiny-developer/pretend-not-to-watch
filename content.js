@@ -67,7 +67,6 @@ function main(app, common) {
     document.addEventListener('_pretend_not_to_watch_init', e => {
         new MutationObserver((mutations, observer) => {
             if (app.querySelector('ytd-menu-renderer.ytd-watch-metadata')) {
-                observer.disconnect();
                 loadSettings();
             }
         }).observe(app, { childList: true, subtree: true });
