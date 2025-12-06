@@ -11,7 +11,7 @@
         return `${TIMESTAMP_MS}_${digest}`;
     };
 
-    async function getHistoryTokens() {
+    async function getHistoryTokens(targetVideoId) {
         const res = await fetch("https://www.youtube.com/youtubei/v1/browse?key=" + ytcfg.data_.INNERTUBE_API_KEY + "&prettyPrint=false", {
             "headers": {
                 "accept": "*/*",
@@ -40,7 +40,7 @@
                 for (const command of commands) {
                     if (command?.listItemViewModel?.title?.content === 'Remove from watch history') {
                         const endpoint = command?.listItemViewModel?.rendererContext?.commandContext?.onTap?.innertubeCommand?.feedbackEndpoint;
-                        if (endpoint) tokens.push({ videoId: endpoint.contentId, token: endpoint.feedbackToken });
+                        if (endpoint?.contentId === targetVideoId) tokens.push(endpoint.feedbackToken);
                         break;
                     }
                 }
@@ -50,7 +50,7 @@
         return tokens;
     }
 
-    async function deleteHistory(feedbackToken) {
+    async function deleteHistory(feedbackTokens) {
         const res = await fetch("https://www.youtube.com/youtubei/v1/feedback?key=" + ytcfg.data_.INNERTUBE_API_KEY + "&prettyPrint=false", {
             "headers": {
                 "accept": "*/*",
@@ -64,7 +64,7 @@
                         "clientVersion": ytcfg.data_.INNERTUBE_CLIENT_VERSION,
                     },
                 },
-                "feedbackTokens": [feedbackToken],
+                "feedbackTokens": feedbackTokens,
             }),
             "method": "POST",
         });
@@ -74,15 +74,13 @@
     document.addEventListener('_pretend_not_to_watch_request', async e => {
         const targetVideoId = e.detail;
 
-        const tokens = await getHistoryTokens();
-
-        const entry = tokens.find((t) => t.videoId === targetVideoId);
-        if (!entry) {
+        const tokens = await getHistoryTokens(targetVideoId);
+        if (tokens?.length === 0) {
             document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_succeeded')); // already removed
             return;
         }
 
-        const result = await deleteHistory(entry.token);
+        const result = await deleteHistory(tokens);
         if (result?.feedbackResponses[0]?.isProcessed) {
             document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_succeeded'));
             return;
