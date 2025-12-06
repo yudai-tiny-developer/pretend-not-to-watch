@@ -36,8 +36,14 @@
         for (const section of sections) {
             const items = section?.itemSectionRenderer?.contents || [];
             for (const item of items) {
-                const endpoint = item?.lockupViewModel?.metadata?.lockupMetadataViewModel?.menuButton?.buttonViewModel?.onTap?.innertubeCommand?.showSheetCommand?.panelLoadingStrategy?.inlineContent?.sheetViewModel?.content?.listViewModel?.listItems[5]?.listItemViewModel?.rendererContext?.commandContext?.onTap?.innertubeCommand?.feedbackEndpoint;
-                if (endpoint) tokens.push({ videoId: endpoint.contentId, token: endpoint.feedbackToken });
+                const commands = item?.lockupViewModel?.metadata?.lockupMetadataViewModel?.menuButton?.buttonViewModel?.onTap?.innertubeCommand?.showSheetCommand?.panelLoadingStrategy?.inlineContent?.sheetViewModel?.content?.listViewModel.listItems || [];
+                for (const command of commands) {
+                    if (command?.listItemViewModel?.title?.content === 'Remove from watch history') {
+                        const endpoint = command?.listItemViewModel?.rendererContext?.commandContext?.onTap?.innertubeCommand?.feedbackEndpoint;
+                        if (endpoint) tokens.push({ videoId: endpoint.contentId, token: endpoint.feedbackToken });
+                        break;
+                    }
+                }
             }
         }
 
