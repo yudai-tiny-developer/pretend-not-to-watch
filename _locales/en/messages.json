@@ -5,7 +5,10 @@
     "button": {
         "message": "Remove from watch history"
     },
-    "toast": {
-        "message": "The view of this video has been removed from history."
+    "succeeded": {
+        "message": "REMOVED"
+    },
+    "timeout": {
+        "message": "Failed to remove"
     }
 }

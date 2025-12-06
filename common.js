@@ -1,6 +1,7 @@
 export const label = {
     button: chrome.i18n.getMessage('button'),
-    toast: chrome.i18n.getMessage('toast'),
+    succeeded: chrome.i18n.getMessage('succeeded'),
+    timeout: chrome.i18n.getMessage('timeout'),
 };
 
 export function isLiveChat(url) {

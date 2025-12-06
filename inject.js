@@ -1,77 +1,89 @@
-const _pretend_not_to_watch_app = document.querySelector('ytd-app');
-if (_pretend_not_to_watch_app) {
-    function click_remove_history_button(iframe, video_id) {
-        for (const button_renderer of iframe.contentDocument.querySelectorAll('ytd-video-renderer ytd-button-renderer')) {
-            if (button_renderer.data.serviceEndpoint.feedbackEndpoint.contentId === video_id) {
-                const button = button_renderer.querySelector('button');
-                if (button) {
-                    button.click();
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    function open_toast(simpleText) {
-        _pretend_not_to_watch_app.resolveCommand({
-            openPopupAction: {
-                popup: {
-                    notificationActionRenderer: {
-                        responseText: {
-                            simpleText
-                        }
-                    }
-                },
-                popupType: 'TOAST'
-            }
+(() => {
+    function sha1(str) {
+        return window.crypto.subtle.digest("SHA-1", new TextEncoder().encode(str)).then((buf) => {
+            return Array.prototype.map.call(new Uint8Array(buf), (x) => ("00" + x.toString(16)).slice(-2)).join("");
         });
+    };
+
+    async function getSApiSidHash(SAPISID, origin) {
+        const TIMESTAMP_MS = Date.now();
+        const digest = await sha1(`${TIMESTAMP_MS} ${SAPISID} ${origin}`);
+        return `${TIMESTAMP_MS}_${digest}`;
+    };
+
+    async function getHistoryTokens() {
+        const res = await fetch("https://www.youtube.com/youtubei/v1/browse?key=" + ytcfg.data_.INNERTUBE_API_KEY + "&prettyPrint=false", {
+            "headers": {
+                "accept": "*/*",
+                "authorization": "SAPISIDHASH " + await getSApiSidHash(document.cookie.split("SAPISID=")[1].split("; ")[0], window.origin),
+                "content-type": "application/json",
+            },
+            "body": JSON.stringify({
+                "context": {
+                    "client": {
+                        "clientName": "WEB",
+                        "clientVersion": ytcfg.data_.INNERTUBE_CLIENT_VERSION,
+                    },
+                },
+                "browseId": "FEhistory",
+            }),
+            "method": "POST",
+        });
+        const data = await res.json();
+
+        const tokens = [];
+        const sections = data?.contents?.twoColumnBrowseResultsRenderer?.tabs[0]?.tabRenderer?.content?.sectionListRenderer?.contents || [];
+        for (const section of sections) {
+            const items = section?.itemSectionRenderer?.contents || [];
+            for (const item of items) {
+                const endpoint = item?.lockupViewModel?.metadata?.lockupMetadataViewModel?.menuButton?.buttonViewModel?.onTap?.innertubeCommand?.showSheetCommand?.panelLoadingStrategy?.inlineContent?.sheetViewModel?.content?.listViewModel?.listItems[5]?.listItemViewModel?.rendererContext?.commandContext?.onTap?.innertubeCommand?.feedbackEndpoint;
+                if (endpoint) tokens.push({ videoId: endpoint.contentId, token: endpoint.feedbackToken });
+            }
+        }
+
+        return tokens;
     }
 
-    document.addEventListener('_pretend_not_to_watch_request', e => {
-        const iframe = document.body.querySelector('iframe#_pretend_not_to_watch');
-        if (!iframe) {
+    async function deleteHistory(feedbackToken) {
+        const res = await fetch("https://www.youtube.com/youtubei/v1/feedback?key=" + ytcfg.data_.INNERTUBE_API_KEY + "&prettyPrint=false", {
+            "headers": {
+                "accept": "*/*",
+                "authorization": "SAPISIDHASH " + await getSApiSidHash(document.cookie.split("SAPISID=")[1].split("; ")[0], window.origin),
+                "content-type": "application/json",
+            },
+            "body": JSON.stringify({
+                "context": {
+                    "client": {
+                        "clientName": "WEB",
+                        "clientVersion": ytcfg.data_.INNERTUBE_CLIENT_VERSION,
+                    },
+                },
+                "feedbackTokens": [feedbackToken],
+            }),
+            "method": "POST",
+        });
+        return await res.json();
+    }
+
+    document.addEventListener('_pretend_not_to_watch_request', async e => {
+        const targetVideoId = e.detail;
+
+        const tokens = await getHistoryTokens();
+
+        const entry = tokens.find((t) => t.videoId === targetVideoId);
+        if (!entry) {
+            document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_timeout'));
             return;
         }
 
-        const player = _pretend_not_to_watch_app.querySelector('div#movie_player');
-        if (!player) {
+        const result = await deleteHistory(entry.token);
+        if (!result) {
+            document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_timeout'));
             return;
         }
 
-        const video_data = player.getVideoData();
-        if (!video_data) {
-            return;
-        }
-
-        let reload_count = 0;
-        iframe.onload = () => {
-            let mutation_count = 0;
-            new MutationObserver((mutations, observer) => {
-                if (mutation_count++ < 3) {
-                    if (click_remove_history_button(iframe, video_data.video_id)) {
-                        observer.disconnect();
-                        document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_succeeded'));
-                        open_toast(e.detail.toast);
-                    } else {
-                        console.log('video not found from watch history');
-                    }
-                } else {
-                    if (reload_count++ < 3) {
-                        console.log('reloading watch history');
-                        observer.disconnect();
-                        iframe.contentWindow.location.reload();
-                    } else {
-                        console.log('video not found from watch history');
-                        observer.disconnect();
-                        document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_timeout'));
-                    }
-                }
-            }).observe(iframe.contentDocument, { childList: true, subtree: true });
-        };
-
-        iframe.contentWindow.location.reload();
+        document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_succeeded'));
     });
 
     document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_init'));
-}
+})();

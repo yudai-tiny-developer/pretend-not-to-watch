@@ -3,9 +3,12 @@
         "message": "再生履歴から現在のビデオを削除するボタンを YouTube プレイヤーに追加する拡張機能"
     },
     "button": {
-        "message": "再生履歴から削除"
+        "message": "履歴から削除"
     },
-    "toast": {
-        "message": "この動画を再生履歴から削除しました。"
+    "succeeded": {
+        "message": "削除済み"
+    },
+    "timeout": {
+        "message": "削除失敗"
     }
 }
