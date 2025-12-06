@@ -106,11 +106,13 @@ function main(app, common) {
         const icon = app.querySelector('div#_pretend_not_to_watch_icon');
         if (icon) {
             icon.innerHTML = TRASH;
+            icon.classList.remove('_pretend_not_to_watch_timeout');
         }
 
         const text = app.querySelector('div#_pretend_not_to_watch_text');
         if (text) {
             text.innerHTML = common.label.succeeded;
+            text.classList.remove('_pretend_not_to_watch_timeout');
         }
 
         const button = app.querySelector('button#_pretend_not_to_watch_button');
@@ -123,11 +125,13 @@ function main(app, common) {
         const icon = app.querySelector('div#_pretend_not_to_watch_icon');
         if (icon) {
             icon.innerHTML = TRASH;
+            icon.classList.add('_pretend_not_to_watch_timeout');
         }
 
         const text = app.querySelector('div#_pretend_not_to_watch_text');
         if (text) {
             text.innerHTML = common.label.timeout;
+            text.classList.add('_pretend_not_to_watch_timeout');
         }
 
         const button = app.querySelector('button#_pretend_not_to_watch_button');
@@ -140,11 +144,13 @@ function main(app, common) {
         const icon = app.querySelector('div#_pretend_not_to_watch_icon');
         if (icon) {
             icon.innerHTML = TRASH;
+            icon.classList.remove('_pretend_not_to_watch_timeout');
         }
 
         const text = app.querySelector('div#_pretend_not_to_watch_text');
         if (text) {
             text.innerHTML = common.label.button;
+            text.classList.remove('_pretend_not_to_watch_timeout');
         }
 
         const button = app.querySelector('button#_pretend_not_to_watch_button');

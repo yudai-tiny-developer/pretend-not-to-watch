@@ -1,3 +1,7 @@
 button#_pretend_not_to_watch {
     fill: #eee !important;
 }
+
+div._pretend_not_to_watch_timeout {
+    color: #ff8983 !important;
+}

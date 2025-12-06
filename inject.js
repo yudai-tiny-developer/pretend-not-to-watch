@@ -72,17 +72,17 @@
 
         const entry = tokens.find((t) => t.videoId === targetVideoId);
         if (!entry) {
-            document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_timeout'));
+            document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_succeeded')); // already removed
             return;
         }
 
         const result = await deleteHistory(entry.token);
-        if (!result) {
-            document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_timeout'));
+        if (result?.feedbackResponses[0]?.isProcessed) {
+            document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_succeeded'));
             return;
         }
 
-        document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_succeeded'));
+        document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_timeout'));
     });
 
     document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_init'));
