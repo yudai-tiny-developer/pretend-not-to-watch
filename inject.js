@@ -15,7 +15,7 @@
         const res = await fetch("https://www.youtube.com/youtubei/v1/browse?key=" + ytcfg.data_.INNERTUBE_API_KEY + "&prettyPrint=false", {
             "headers": {
                 "accept": "*/*",
-                "authorization": "SAPISIDHASH " + await getSApiSidHash(document.cookie.split("SAPISID=")[1].split("; ")[0], window.origin),
+                "authorization": "SAPISIDHASH " + await getSApiSidHash(document.cookie.split("SAPISID=")[1]?.split("; ")[0], window.origin),
                 "content-type": "application/json",
             },
             "body": JSON.stringify({
