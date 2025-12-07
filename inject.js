@@ -76,7 +76,7 @@
 
         const tokens = await getHistoryTokens(targetVideoId);
         if (tokens?.length === 0) {
-            document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_succeeded')); // already removed
+            document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_noTarget'));
             return;
         }
 
@@ -86,7 +86,7 @@
             return;
         }
 
-        document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_timeout'));
+        document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_failed'));
     });
 
     document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_init'));

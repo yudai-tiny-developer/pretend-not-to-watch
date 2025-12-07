@@ -1,7 +1,15 @@
+div#_pretend_not_to_watch {
+    margin-right: 8px !important;
+}
+
 button#_pretend_not_to_watch {
     fill: #eee !important;
 }
 
-div._pretend_not_to_watch_timeout {
+div._pretend_not_to_watch_noTarget {
+    color: #cfcf63 !important;
+}
+
+div._pretend_not_to_watch_failed {
     color: #ff8983 !important;
 }

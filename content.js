@@ -74,18 +74,21 @@ function main(app, common) {
             );
             button.disabled = false;
             button.addEventListener('click', () => {
+                icon.innerHTML = LOADING;
+                icon.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
+                text.innerHTML = common.label.removing;
+                text.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
+                button.disabled = true;
+
                 const detail = getYouTubeID(location.href);
                 document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_request', { detail }));
-
-                icon.innerHTML = LOADING;
-                button.disabled = true;
             });
             button.appendChild(icon);
             button.appendChild(text);
 
             const div = document.createElement('div');
+            div.id = '_pretend_not_to_watch';
             div.classList.add('style-scope', 'ytd-menu-renderer');
-            div.style.marginRight = '8px';
             div.appendChild(button);
 
             area.insertBefore(div, area.firstChild);
@@ -106,13 +109,13 @@ function main(app, common) {
         const icon = app.querySelector('div#_pretend_not_to_watch_icon');
         if (icon) {
             icon.innerHTML = TRASH;
-            icon.classList.remove('_pretend_not_to_watch_timeout');
+            icon.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
         }
 
         const text = app.querySelector('div#_pretend_not_to_watch_text');
         if (text) {
             text.innerHTML = common.label.succeeded;
-            text.classList.remove('_pretend_not_to_watch_timeout');
+            text.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
         }
 
         const button = app.querySelector('button#_pretend_not_to_watch_button');
@@ -121,17 +124,40 @@ function main(app, common) {
         }
     });
 
-    document.addEventListener('_pretend_not_to_watch_timeout', e => {
+    document.addEventListener('_pretend_not_to_watch_noTarget', e => {
         const icon = app.querySelector('div#_pretend_not_to_watch_icon');
         if (icon) {
             icon.innerHTML = TRASH;
-            icon.classList.add('_pretend_not_to_watch_timeout');
+            icon.classList.remove('_pretend_not_to_watch_failed');
+            icon.classList.add('_pretend_not_to_watch_noTarget');
         }
 
         const text = app.querySelector('div#_pretend_not_to_watch_text');
         if (text) {
-            text.innerHTML = common.label.timeout;
-            text.classList.add('_pretend_not_to_watch_timeout');
+            text.innerHTML = common.label.noTarget;
+            text.classList.remove('_pretend_not_to_watch_failed');
+            text.classList.add('_pretend_not_to_watch_noTarget');
+        }
+
+        const button = app.querySelector('button#_pretend_not_to_watch_button');
+        if (button) {
+            button.disabled = false;
+        }
+    });
+
+    document.addEventListener('_pretend_not_to_watch_failed', e => {
+        const icon = app.querySelector('div#_pretend_not_to_watch_icon');
+        if (icon) {
+            icon.innerHTML = TRASH;
+            icon.classList.remove('_pretend_not_to_watch_noTarget');
+            icon.classList.add('_pretend_not_to_watch_failed');
+        }
+
+        const text = app.querySelector('div#_pretend_not_to_watch_text');
+        if (text) {
+            text.innerHTML = common.label.failed;
+            text.classList.remove('_pretend_not_to_watch_noTarget');
+            text.classList.add('_pretend_not_to_watch_failed');
         }
 
         const button = app.querySelector('button#_pretend_not_to_watch_button');
@@ -144,13 +170,13 @@ function main(app, common) {
         const icon = app.querySelector('div#_pretend_not_to_watch_icon');
         if (icon) {
             icon.innerHTML = TRASH;
-            icon.classList.remove('_pretend_not_to_watch_timeout');
+            icon.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
         }
 
         const text = app.querySelector('div#_pretend_not_to_watch_text');
         if (text) {
             text.innerHTML = common.label.button;
-            text.classList.remove('_pretend_not_to_watch_timeout');
+            text.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
         }
 
         const button = app.querySelector('button#_pretend_not_to_watch_button');
