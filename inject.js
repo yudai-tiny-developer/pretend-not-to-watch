@@ -17,6 +17,8 @@
                 "accept": "*/*",
                 "authorization": "SAPISIDHASH " + await getSApiSidHash(document.cookie.split("SAPISID=")[1]?.split("; ")[0], window.origin),
                 "content-type": "application/json",
+                "x-goog-authuser": ytcfg.data_.SESSION_INDEX,
+                "x-goog-pageid": ytcfg.data_.DELEGATED_SESSION_ID,
             },
             "body": JSON.stringify({
                 "context": {
@@ -56,6 +58,8 @@
                 "accept": "*/*",
                 "authorization": "SAPISIDHASH " + await getSApiSidHash(document.cookie.split("SAPISID=")[1].split("; ")[0], window.origin),
                 "content-type": "application/json",
+                "x-goog-authuser": ytcfg.data_.SESSION_INDEX,
+                "x-goog-pageid": ytcfg.data_.DELEGATED_SESSION_ID,
             },
             "body": JSON.stringify({
                 "context": {
