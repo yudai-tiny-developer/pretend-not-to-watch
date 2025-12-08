@@ -17,6 +17,8 @@
                 "accept": "*/*",
                 "authorization": "SAPISIDHASH " + await getSApiSidHash(document.cookie.split("SAPISID=")[1]?.split("; ")[0], window.origin),
                 "content-type": "application/json",
+                "x-goog-authuser": ytcfg.data_.SESSION_INDEX,
+                "x-goog-pageid": ytcfg.data_.DELEGATED_SESSION_ID,
             },
             "body": JSON.stringify({
                 "context": {
@@ -56,6 +58,8 @@
                 "accept": "*/*",
                 "authorization": "SAPISIDHASH " + await getSApiSidHash(document.cookie.split("SAPISID=")[1].split("; ")[0], window.origin),
                 "content-type": "application/json",
+                "x-goog-authuser": ytcfg.data_.SESSION_INDEX,
+                "x-goog-pageid": ytcfg.data_.DELEGATED_SESSION_ID,
             },
             "body": JSON.stringify({
                 "context": {
@@ -76,7 +80,7 @@
 
         const tokens = await getHistoryTokens(targetVideoId);
         if (tokens?.length === 0) {
-            document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_succeeded')); // already removed
+            document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_noTarget'));
             return;
         }
 
@@ -86,7 +90,7 @@
             return;
         }
 
-        document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_timeout'));
+        document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_failed'));
     });
 
     document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_init'));

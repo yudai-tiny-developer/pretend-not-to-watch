@@ -5,10 +5,16 @@
     "button": {
         "message": "Remove from watch history"
     },
-    "succeeded": {
-        "message": "REMOVED"
+    "removing": {
+        "message": "Removing"
     },
-    "timeout": {
+    "succeeded": {
+        "message": "Removed"
+    },
+    "noTarget": {
+        "message": "No items to delete"
+    },
+    "failed": {
         "message": "Failed to remove"
     }
 }

@@ -5,10 +5,16 @@
     "button": {
         "message": "履歴から削除"
     },
+    "removing": {
+        "message": "削除中"
+    },
     "succeeded": {
         "message": "削除済み"
     },
-    "timeout": {
+    "noTarget": {
+        "message": "削除対象無し"
+    },
+    "failed": {
         "message": "削除失敗"
     }
 }
