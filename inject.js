@@ -36,14 +36,35 @@
         const tokens = [];
         const sections = data?.contents?.twoColumnBrowseResultsRenderer?.tabs[0]?.tabRenderer?.content?.sectionListRenderer?.contents || [];
         for (const section of sections) {
-            const items = section?.itemSectionRenderer?.contents || [];
-            for (const item of items) {
-                const commands = item?.lockupViewModel?.metadata?.lockupMetadataViewModel?.menuButton?.buttonViewModel?.onTap?.innertubeCommand?.showSheetCommand?.panelLoadingStrategy?.inlineContent?.sheetViewModel?.content?.listViewModel.listItems || [];
-                for (const command of commands) {
+            const section_items = section?.itemSectionRenderer?.contents || [];
+            for (const item of section_items) {
+                const lockup_commands = item?.lockupViewModel?.metadata?.lockupMetadataViewModel?.menuButton?.buttonViewModel?.onTap?.innertubeCommand?.showSheetCommand?.panelLoadingStrategy?.inlineContent?.sheetViewModel?.content?.listViewModel.listItems || [];
+                for (const command of lockup_commands) {
                     if (command?.listItemViewModel?.title?.content === 'Remove from watch history') {
                         const endpoint = command?.listItemViewModel?.rendererContext?.commandContext?.onTap?.innertubeCommand?.feedbackEndpoint;
                         if (endpoint?.contentId === targetVideoId) tokens.push(endpoint.feedbackToken);
                         break;
+                    }
+                }
+
+                const video_commands = item?.videoRenderer?.menu?.menuRenderer?.items || [];
+                for (const command of video_commands) {
+                    if (command?.menuServiceItemRenderer?.text?.runs[0]?.text === 'Remove from watch history') {
+                        const endpoint = command?.menuServiceItemRenderer?.serviceEndpoint?.feedbackEndpoint;
+                        if (endpoint?.contentId === targetVideoId) tokens.push(endpoint.feedbackToken);
+                        break;
+                    }
+                }
+
+                const reel_items = item?.reelShelfRenderer?.items || [];
+                for (const item of reel_items) {
+                    const commands = item?.shortsLockupViewModel?.menuOnTap?.innertubeCommand?.showSheetCommand?.panelLoadingStrategy?.inlineContent?.sheetViewModel?.content?.listViewModel.listItems || [];
+                    for (const command of commands) {
+                        if (command?.listItemViewModel?.title?.content === 'Remove from watch history') {
+                            const endpoint = command?.listItemViewModel?.rendererContext?.commandContext?.onTap?.innertubeCommand?.feedbackEndpoint;
+                            if (endpoint?.contentId === targetVideoId) tokens.push(endpoint.feedbackToken);
+                            break;
+                        }
                     }
                 }
             }

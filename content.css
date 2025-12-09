@@ -2,6 +2,10 @@ div#_pretend_not_to_watch {
     margin-right: 8px !important;
 }
 
+div#metapanel div#_pretend_not_to_watch {
+    margin-bottom: 8px !important;
+}
+
 button#_pretend_not_to_watch {
     fill: #eee !important;
 }
