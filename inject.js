@@ -98,20 +98,21 @@
 
     document.addEventListener('_pretend_not_to_watch_request', async e => {
         const targetVideoId = e.detail;
+        for (let retry_count = 0; retry_count < 4; retry_count++) {
+            const tokens = await getHistoryTokens(targetVideoId);
+            if (!tokens || tokens.length === 0) {
+                continue;
+            }
 
-        const tokens = await getHistoryTokens(targetVideoId);
-        if (tokens?.length === 0) {
-            document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_noTarget'));
+            const result = await deleteHistory(tokens);
+            if (result?.feedbackResponses[0]?.isProcessed) {
+                document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_succeeded'));
+            } else {
+                document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_failed'));
+            }
             return;
         }
-
-        const result = await deleteHistory(tokens);
-        if (result?.feedbackResponses[0]?.isProcessed) {
-            document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_succeeded'));
-            return;
-        }
-
-        document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_failed'));
+        document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_noTarget'));
     });
 
     document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_init'));

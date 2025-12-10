@@ -8,13 +8,6 @@ function main(app, common) {
     const TRASH = '<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24" focusable="false" style="pointer-events: none; display: inherit; width: 24px; height: 24px;"><path d="M11 17H9V8h2v9zm4-9h-2v9h2V8zm4-4v1h-1v16H6V5H5V4h4V3h6v1h4zm-2 1H7v15h10V5z"></path></svg>';
     const LOADING = '<div class="ytp-spinner" data-layer="4" style="display: block; position: relative; width: 26px; height: 26px; left: 0px; top: 0px; margin: auto;"><div class="ytp-spinner-container" style="left: 25%;"><div class="ytp-spinner-rotator"><div class="ytp-spinner-left"><div class="ytp-spinner-circle" style="border-width: 4px;"></div></div><div class="ytp-spinner-right"><div class="ytp-spinner-circle" style="border-width: 4px;"></div></div></div></div></div>';
 
-    function loadSettings() {
-        const video_area = app.querySelector('ytd-menu-renderer.ytd-watch-metadata');
-        if (video_area) {
-            append_button(video_area, false);
-        }
-    }
-
     function append_button(area, isShorts) {
         const exists = area.querySelector('div#_pretend_not_to_watch');
         if (!exists) {
@@ -60,15 +53,20 @@ function main(app, common) {
             button.disabled = true;
 
             const detail = getYouTubeID(location.href);
-            document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_request', { detail }));
+            if (detail) {
+                document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_request', { detail }));
 
-            setTimeout(() => {
-                if (text.innerHTML === common.label.removing) {
-                    icon.innerHTML = TRASH;
-                    text.innerHTML = common.label.button;
-                    button.disabled = false;
-                }
-            }, 10000);
+                clearTimeout(removing_timeout);
+                removing_timeout = setTimeout(() => {
+                    if (text.innerHTML === common.label.removing) {
+                        icon.innerHTML = TRASH;
+                        icon.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
+                        text.innerHTML = common.label.button;
+                        text.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
+                        button.disabled = false;
+                    }
+                }, 10000);
+            }
         });
         button.appendChild(icon);
         button.appendChild(text);
@@ -118,17 +116,17 @@ function main(app, common) {
         }
     }
 
+    let init_interval;
+    let removing_timeout;
+
     document.addEventListener('_pretend_not_to_watch_init', e => {
-        new MutationObserver((mutations, observer) => {
+        clearInterval(init_interval);
+        init_interval = setInterval(() => {
             const video_area = app.querySelector('ytd-menu-renderer.ytd-watch-metadata');
             if (video_area) {
-                observer.disconnect();
                 append_button(video_area, false);
             }
-        }).observe(app, { childList: true, subtree: true });
-        loadSettings();
 
-        setInterval(() => {
             const shorts_area = app.querySelector('div#metapanel');
             if (shorts_area) {
                 append_button(shorts_area, true);
