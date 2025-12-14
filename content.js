@@ -131,7 +131,7 @@ function main(app, common) {
             if (shorts_area) {
                 append_button(shorts_area, true);
             }
-        }, 1000);
+        }, 500);
     });
 
     document.addEventListener('_pretend_not_to_watch_succeeded', e => {
