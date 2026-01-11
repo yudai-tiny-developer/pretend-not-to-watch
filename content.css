@@ -1,13 +1,13 @@
 div#_pretend_not_to_watch {
-    margin-right: 8px !important;
+    float: right !important;
 }
 
 div#metapanel div#_pretend_not_to_watch {
     margin-bottom: 8px !important;
 }
 
-button#_pretend_not_to_watch {
-    fill: #eee !important;
+button#_pretend_not_to_watch_button {
+    margin: 0 0 0 auto !important;
 }
 
 div._pretend_not_to_watch_noTarget {
@@ -16,4 +16,9 @@ div._pretend_not_to_watch_noTarget {
 
 div._pretend_not_to_watch_failed {
     color: #ff8983 !important;
+}
+
+ytd-watch-metadata h1.ytd-watch-metadata {
+    display: block !important;
+    max-height: none !important;
 }
