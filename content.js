@@ -73,7 +73,7 @@ function main(app, common) {
                         text.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
                         button.disabled = false;
                     }
-                }, 5000);
+                }, 10000);
             }
         });
         button.appendChild(icon);
