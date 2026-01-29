@@ -147,81 +147,69 @@ function main(app, common) {
     });
 
     document.addEventListener('_pretend_not_to_watch_succeeded', e => {
-        const icon = app.querySelector('div#_pretend_not_to_watch_icon');
-        if (icon) {
+        for (const icon of app.querySelectorAll('div#_pretend_not_to_watch_icon')) {
             icon.innerHTML = TRASH;
             icon.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
         }
 
-        const text = app.querySelector('div#_pretend_not_to_watch_text');
-        if (text) {
+        for (const text of app.querySelectorAll('div#_pretend_not_to_watch_text')) {
             text.innerHTML = common.label.succeeded;
             text.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
         }
 
-        const button = app.querySelector('button#_pretend_not_to_watch_button');
-        if (button) {
+        for (const button of app.querySelectorAll('button#_pretend_not_to_watch_button')) {
             button.disabled = true;
         }
     });
 
     document.addEventListener('_pretend_not_to_watch_noTarget', e => {
-        const icon = app.querySelector('div#_pretend_not_to_watch_icon');
-        if (icon) {
+        for (const icon of app.querySelectorAll('div#_pretend_not_to_watch_icon')) {
             icon.innerHTML = TRASH;
             icon.classList.remove('_pretend_not_to_watch_failed');
             icon.classList.add('_pretend_not_to_watch_noTarget');
         }
 
-        const text = app.querySelector('div#_pretend_not_to_watch_text');
-        if (text) {
+        for (const text of app.querySelectorAll('div#_pretend_not_to_watch_text')) {
             text.innerHTML = common.label.noTarget;
             text.classList.remove('_pretend_not_to_watch_failed');
             text.classList.add('_pretend_not_to_watch_noTarget');
         }
 
-        const button = app.querySelector('button#_pretend_not_to_watch_button');
-        if (button) {
+        for (const button of app.querySelectorAll('button#_pretend_not_to_watch_button')) {
             button.disabled = false;
         }
     });
 
     document.addEventListener('_pretend_not_to_watch_failed', e => {
-        const icon = app.querySelector('div#_pretend_not_to_watch_icon');
-        if (icon) {
+        for (const icon of app.querySelectorAll('div#_pretend_not_to_watch_icon')) {
             icon.innerHTML = TRASH;
             icon.classList.remove('_pretend_not_to_watch_noTarget');
             icon.classList.add('_pretend_not_to_watch_failed');
         }
 
-        const text = app.querySelector('div#_pretend_not_to_watch_text');
-        if (text) {
+        for (const text of app.querySelectorAll('div#_pretend_not_to_watch_text')) {
             text.innerHTML = common.label.failed;
             text.classList.remove('_pretend_not_to_watch_noTarget');
             text.classList.add('_pretend_not_to_watch_failed');
         }
 
-        const button = app.querySelector('button#_pretend_not_to_watch_button');
-        if (button) {
+        for (const button of app.querySelectorAll('button#_pretend_not_to_watch_button')) {
             button.disabled = false;
         }
     });
 
     document.addEventListener('yt-navigate-finish', e => {
-        const icon = app.querySelector('div#_pretend_not_to_watch_icon');
-        if (icon) {
+        for (const icon of app.querySelectorAll('div#_pretend_not_to_watch_icon')) {
             icon.innerHTML = TRASH;
             icon.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
         }
 
-        const text = app.querySelector('div#_pretend_not_to_watch_text');
-        if (text) {
+        for (const text of app.querySelectorAll('div#_pretend_not_to_watch_text')) {
             text.innerHTML = common.label.button;
             text.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
         }
 
-        const button = app.querySelector('button#_pretend_not_to_watch_button');
-        if (button) {
+        for (const button of app.querySelectorAll('button#_pretend_not_to_watch_button')) {
             button.disabled = false;
         }
     });
