@@ -1,10 +1,10 @@
 import(chrome.runtime.getURL('common.js')).then(common => {
     if (!common.isLiveChat(location.href)) {
-        main(document.querySelector('ytd-app') ?? document.body, common);
+        main(common);
     }
 });
 
-function main(app, common) {
+function main(common) {
     const TRASH = '<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24" focusable="false" style="pointer-events: none; display: inherit; width: 24px; height: 24px;"><path d="M11 17H9V8h2v9zm4-9h-2v9h2V8zm4-4v1h-1v16H6V5H5V4h4V3h6v1h4zm-2 1H7v15h10V5z"></path></svg>';
     const LOADING = '<div class="ytp-spinner" data-layer="4" style="display: block; position: relative; width: 26px; height: 26px; left: 0px; top: 0px; margin: auto;"><div class="ytp-spinner-container" style="left: 25%;"><div class="ytp-spinner-rotator"><div class="ytp-spinner-left"><div class="ytp-spinner-circle" style="border-width: 4px;"></div></div><div class="ytp-spinner-right"><div class="ytp-spinner-circle" style="border-width: 4px;"></div></div></div></div></div>';
 
@@ -134,12 +134,12 @@ function main(app, common) {
     document.addEventListener('_pretend_not_to_watch_init', e => {
         clearInterval(init_interval);
         init_interval = setInterval(() => {
-            const video_area = app.querySelector('ytd-watch-metadata h1.ytd-watch-metadata');
+            const video_area = document.body?.querySelector('ytd-watch-metadata h1.ytd-watch-metadata');
             if (video_area) {
                 append_button(video_area);
             }
 
-            const shorts_area = app.querySelector('ytd-reel-video-renderer yt-reel-metapanel-view-model');
+            const shorts_area = document.body?.querySelector('ytd-reel-video-renderer yt-reel-metapanel-view-model');
             if (shorts_area) {
                 append_button_shorts(shorts_area);
             }
@@ -147,69 +147,69 @@ function main(app, common) {
     });
 
     document.addEventListener('_pretend_not_to_watch_succeeded', e => {
-        for (const icon of app.querySelectorAll('div#_pretend_not_to_watch_icon')) {
+        for (const icon of document.querySelectorAll('div#_pretend_not_to_watch_icon')) {
             icon.innerHTML = TRASH;
             icon.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
         }
 
-        for (const text of app.querySelectorAll('div#_pretend_not_to_watch_text')) {
+        for (const text of document.querySelectorAll('div#_pretend_not_to_watch_text')) {
             text.innerHTML = common.label.succeeded;
             text.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
         }
 
-        for (const button of app.querySelectorAll('button#_pretend_not_to_watch_button')) {
+        for (const button of document.querySelectorAll('button#_pretend_not_to_watch_button')) {
             button.disabled = true;
         }
     });
 
     document.addEventListener('_pretend_not_to_watch_noTarget', e => {
-        for (const icon of app.querySelectorAll('div#_pretend_not_to_watch_icon')) {
+        for (const icon of document.querySelectorAll('div#_pretend_not_to_watch_icon')) {
             icon.innerHTML = TRASH;
             icon.classList.remove('_pretend_not_to_watch_failed');
             icon.classList.add('_pretend_not_to_watch_noTarget');
         }
 
-        for (const text of app.querySelectorAll('div#_pretend_not_to_watch_text')) {
+        for (const text of document.querySelectorAll('div#_pretend_not_to_watch_text')) {
             text.innerHTML = common.label.noTarget;
             text.classList.remove('_pretend_not_to_watch_failed');
             text.classList.add('_pretend_not_to_watch_noTarget');
         }
 
-        for (const button of app.querySelectorAll('button#_pretend_not_to_watch_button')) {
+        for (const button of document.querySelectorAll('button#_pretend_not_to_watch_button')) {
             button.disabled = false;
         }
     });
 
     document.addEventListener('_pretend_not_to_watch_failed', e => {
-        for (const icon of app.querySelectorAll('div#_pretend_not_to_watch_icon')) {
+        for (const icon of document.querySelectorAll('div#_pretend_not_to_watch_icon')) {
             icon.innerHTML = TRASH;
             icon.classList.remove('_pretend_not_to_watch_noTarget');
             icon.classList.add('_pretend_not_to_watch_failed');
         }
 
-        for (const text of app.querySelectorAll('div#_pretend_not_to_watch_text')) {
+        for (const text of document.querySelectorAll('div#_pretend_not_to_watch_text')) {
             text.innerHTML = common.label.failed;
             text.classList.remove('_pretend_not_to_watch_noTarget');
             text.classList.add('_pretend_not_to_watch_failed');
         }
 
-        for (const button of app.querySelectorAll('button#_pretend_not_to_watch_button')) {
+        for (const button of document.querySelectorAll('button#_pretend_not_to_watch_button')) {
             button.disabled = false;
         }
     });
 
     document.addEventListener('yt-navigate-finish', e => {
-        for (const icon of app.querySelectorAll('div#_pretend_not_to_watch_icon')) {
+        for (const icon of document.querySelectorAll('div#_pretend_not_to_watch_icon')) {
             icon.innerHTML = TRASH;
             icon.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
         }
 
-        for (const text of app.querySelectorAll('div#_pretend_not_to_watch_text')) {
+        for (const text of document.querySelectorAll('div#_pretend_not_to_watch_text')) {
             text.innerHTML = common.label.button;
             text.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
         }
 
-        for (const button of app.querySelectorAll('button#_pretend_not_to_watch_button')) {
+        for (const button of document.querySelectorAll('button#_pretend_not_to_watch_button')) {
             button.disabled = false;
         }
     });
