@@ -73,7 +73,7 @@
         return tokens;
     }
 
-    async function deleteHistory(feedbackTokens) {
+    async function deleteHistoryByTokens(feedbackTokens) {
         const res = await fetch("https://www.youtube.com/youtubei/v1/feedback?key=" + ytcfg.data_.INNERTUBE_API_KEY + "&prettyPrint=false", {
             "headers": {
                 "accept": "*/*",
@@ -96,37 +96,76 @@
         return await res.json();
     }
 
-    document.addEventListener('_pretend_not_to_watch_request', async () => {
-        const player = document.getElementById("movie_player");
-        if (!player) {
-            document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_noTarget'));
-            return;
-        }
+    function getVideoIdFromUrl(url) {
+        if (!url || typeof url !== 'string') return null;
+        try {
+            const u = new URL(url);
+            const path = u.pathname;
 
-        const playerResponse = player.getPlayerResponse();
-        if (!playerResponse) {
-            document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_noTarget'));
-            return;
-        }
+            if (u.searchParams.has('v')) {
+                const v = u.searchParams.get('v');
+                return v;
+            }
 
-        const targetVideoId = playerResponse?.playabilityStatus?.errorScreen?.ypcTrailerRenderer?.unserializedPlayerResponse?.videoDetails?.videoId ?? playerResponse?.videoDetails?.videoId;
-        if (targetVideoId) {
-            for (let retry_count = 0; retry_count < 4; retry_count++) {
-                const tokens = await getHistoryTokens(targetVideoId);
-                if (!tokens || tokens.length === 0) {
-                    continue;
+            const parts = path.split('/');
+            for (let i = 0; i < parts.length; i++) {
+                const p = parts[i];
+                if (['embed', 'v', 'shorts', 'live'].includes(p) && parts[i + 1]) {
+                    return parts[i + 1];
                 }
+            }
 
-                const result = await deleteHistory(tokens);
-                if (result?.feedbackResponses[0]?.isProcessed) {
-                    document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_succeeded'));
-                } else {
-                    document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_failed'));
+            if (u.searchParams.has('video_id')) {
+                const vid = u.searchParams.get('video_id');
+                return vid;
+            }
+
+            const fallback = url.match(/([A-Za-z0-9_-]{11})/g);
+            if (fallback) {
+                for (const cand of fallback) {
+                    return cand;
                 }
-                return;
+            }
+
+            return null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    async function removeFromHistory(videoId) {
+        for (let retry_count = 0; retry_count < 4; retry_count++) {
+            const tokens = await getHistoryTokens(videoId);
+            if (!tokens || tokens.length === 0) {
+                continue;
+            }
+
+            const result = await deleteHistoryByTokens(tokens);
+            if (result?.feedbackResponses[0]?.isProcessed) {
+                document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_succeeded'));
+            } else {
+                document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_failed'));
             }
         }
-        document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_noTarget'));
+    }
+
+    document.addEventListener('_pretend_not_to_watch_request', async () => {
+        const playerResponse = document.getElementById("movie_player")?.getPlayerResponse();
+        if (playerResponse) { // video
+            const videoId = playerResponse?.playabilityStatus?.errorScreen?.ypcTrailerRenderer?.unserializedPlayerResponse?.videoDetails?.videoId ?? playerResponse?.videoDetails?.videoId;
+            if (videoId) {
+                removeFromHistory(videoId);
+            } else {
+                document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_noTarget'));
+            }
+        } else { // shorts
+            const videoId = getVideoIdFromUrl(location.href);
+            if (videoId) {
+                removeFromHistory(videoId);
+            } else {
+                document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_noTarget'));
+            }
+        }
     });
 
     document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_init'));
