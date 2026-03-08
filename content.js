@@ -60,21 +60,18 @@ function main(common) {
             text.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
             button.disabled = true;
 
-            const detail = getYouTubeID(location.href);
-            if (detail) {
-                document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_request', { detail }));
+            document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_request'));
 
-                clearTimeout(removing_timeout);
-                removing_timeout = setTimeout(() => {
-                    if (text.innerHTML === common.label.removing) {
-                        icon.innerHTML = TRASH;
-                        icon.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
-                        text.innerHTML = common.label.button;
-                        text.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
-                        button.disabled = false;
-                    }
-                }, 10000);
-            }
+            clearTimeout(removing_timeout);
+            removing_timeout = setTimeout(() => {
+                if (text.innerHTML === common.label.removing) {
+                    icon.innerHTML = TRASH;
+                    icon.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
+                    text.innerHTML = common.label.button;
+                    text.classList.remove('_pretend_not_to_watch_noTarget', '_pretend_not_to_watch_failed');
+                    button.disabled = false;
+                }
+            }, 10000);
         });
         button.appendChild(icon);
         button.appendChild(text);
@@ -89,43 +86,6 @@ function main(common) {
         div.appendChild(button);
 
         return div;
-    }
-
-    function getYouTubeID(url) {
-        if (!url || typeof url !== 'string') return null;
-        try {
-            const u = new URL(url);
-            const path = u.pathname;
-
-            if (u.searchParams.has('v')) {
-                const v = u.searchParams.get('v');
-                return v;
-            }
-
-            const parts = path.split('/');
-            for (let i = 0; i < parts.length; i++) {
-                const p = parts[i];
-                if (['embed', 'v', 'shorts', 'live'].includes(p) && parts[i + 1]) {
-                    return parts[i + 1];
-                }
-            }
-
-            if (u.searchParams.has('video_id')) {
-                const vid = u.searchParams.get('video_id');
-                return vid;
-            }
-
-            const fallback = url.match(/([A-Za-z0-9_-]{11})/g);
-            if (fallback) {
-                for (const cand of fallback) {
-                    return cand;
-                }
-            }
-
-            return null;
-        } catch (e) {
-            return null;
-        }
     }
 
     let init_interval;
