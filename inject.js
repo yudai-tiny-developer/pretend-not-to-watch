@@ -34,41 +34,30 @@
         const data = await res.json();
 
         const tokens = [];
-        const sections = data?.contents?.twoColumnBrowseResultsRenderer?.tabs[0]?.tabRenderer?.content?.sectionListRenderer?.contents || [];
-        for (const section of sections) {
-            const section_items = section?.itemSectionRenderer?.contents || [];
-            for (const item of section_items) {
-                const lockup_commands = item?.lockupViewModel?.metadata?.lockupMetadataViewModel?.menuButton?.buttonViewModel?.onTap?.innertubeCommand?.showSheetCommand?.panelLoadingStrategy?.inlineContent?.sheetViewModel?.content?.listViewModel.listItems || [];
-                for (const command of lockup_commands) {
-                    if (command?.listItemViewModel?.title?.content === 'Remove from watch history') {
-                        const endpoint = command?.listItemViewModel?.rendererContext?.commandContext?.onTap?.innertubeCommand?.feedbackEndpoint;
-                        if (endpoint?.contentId === targetVideoId) tokens.push(endpoint.feedbackToken);
-                        break;
-                    }
-                }
 
-                const video_commands = item?.videoRenderer?.menu?.menuRenderer?.items || [];
-                for (const command of video_commands) {
-                    if (command?.menuServiceItemRenderer?.text?.runs[0]?.text === 'Remove from watch history') {
-                        const endpoint = command?.menuServiceItemRenderer?.serviceEndpoint?.feedbackEndpoint;
-                        if (endpoint?.contentId === targetVideoId) tokens.push(endpoint.feedbackToken);
+        findObjectsByValue(data, targetVideoId).forEach(item => {
+            // video
+            for (const listItemViewModel of findValuesByKey(item, 'listItemViewModel')) {
+                if (listItemViewModel.title?.content === 'Remove from watch history') {
+                    const feedbackToken = findFirstValueByKey(listItemViewModel, 'feedbackToken');
+                    if (feedbackToken) {
+                        tokens.push(feedbackToken);
                         break;
-                    }
-                }
-
-                const reel_items = item?.reelShelfRenderer?.items || [];
-                for (const item of reel_items) {
-                    const commands = item?.shortsLockupViewModel?.menuOnTap?.innertubeCommand?.showSheetCommand?.panelLoadingStrategy?.inlineContent?.sheetViewModel?.content?.listViewModel.listItems || [];
-                    for (const command of commands) {
-                        if (command?.listItemViewModel?.title?.content === 'Remove from watch history') {
-                            const endpoint = command?.listItemViewModel?.rendererContext?.commandContext?.onTap?.innertubeCommand?.feedbackEndpoint;
-                            if (endpoint?.contentId === targetVideoId) tokens.push(endpoint.feedbackToken);
-                            break;
-                        }
                     }
                 }
             }
-        }
+
+            // shorts
+            for (const menuServiceItemRenderer of findValuesByKey(item, 'menuServiceItemRenderer')) {
+                if (menuServiceItemRenderer.text?.runs[0]?.text === 'Remove from watch history') {
+                    const feedbackToken = findFirstValueByKey(menuServiceItemRenderer, 'feedbackToken');
+                    if (feedbackToken) {
+                        tokens.push(feedbackToken);
+                        break;
+                    }
+                }
+            }
+        });
 
         return tokens;
     }
@@ -147,6 +136,113 @@
                 document.dispatchEvent(new CustomEvent('_pretend_not_to_watch_failed'));
             }
         }
+    }
+
+    function findValuesByKey(root, targetKey) {
+        const results = [];
+        const stack = [root];
+        const visited = new WeakSet();
+
+        while (stack.length) {
+            const current = stack.pop();
+
+            if (current === null || typeof current !== "object") continue;
+            if (visited.has(current)) continue;
+            visited.add(current);
+
+            if (Array.isArray(current)) {
+                for (let i = 0; i < current.length; i++) {
+                    stack.push(current[i]);
+                }
+            } else {
+                const keys = Object.keys(current);
+                for (let i = 0; i < keys.length; i++) {
+                    const k = keys[i];
+                    const value = current[k];
+
+                    if (k === targetKey) {
+                        results.push(value);
+                    }
+
+                    if (value && typeof value === "object") {
+                        stack.push(value);
+                    }
+                }
+            }
+        }
+
+        return results;
+    }
+
+    function findObjectsByValue(root, targetValue) {
+        const results = [];
+        const stack = [root];
+        const visited = new WeakSet();
+
+        while (stack.length) {
+            const current = stack.pop();
+
+            if (current === null || typeof current !== "object") continue;
+            if (visited.has(current)) continue;
+            visited.add(current);
+
+            if (Array.isArray(current)) {
+                for (let i = 0; i < current.length; i++) {
+                    stack.push(current[i]);
+                }
+            } else {
+                const keys = Object.keys(current);
+                for (let i = 0; i < keys.length; i++) {
+                    const k = keys[i];
+                    const value = current[k];
+
+                    if (value === targetValue) {
+                        results.push(current);
+                    }
+
+                    if (value && typeof value === "object") {
+                        stack.push(value);
+                    }
+                }
+            }
+        }
+
+        return results;
+    }
+
+    function findFirstValueByKey(root, targetKey) {
+        const stack = [root];
+        const visited = new WeakSet();
+
+        while (stack.length) {
+            const current = stack.pop();
+
+            if (current === null || typeof current !== "object") continue;
+            if (visited.has(current)) continue;
+            visited.add(current);
+
+            if (Array.isArray(current)) {
+                for (let i = 0; i < current.length; i++) {
+                    stack.push(current[i]);
+                }
+            } else {
+                const keys = Object.keys(current);
+                for (let i = 0; i < keys.length; i++) {
+                    const k = keys[i];
+                    const value = current[k];
+
+                    if (k === targetKey) {
+                        return value;
+                    }
+
+                    if (value && typeof value === "object") {
+                        stack.push(value);
+                    }
+                }
+            }
+        }
+
+        return undefined;
     }
 
     document.addEventListener('_pretend_not_to_watch_request', async () => {
