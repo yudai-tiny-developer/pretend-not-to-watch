@@ -69,7 +69,7 @@
         const tokens = [];
 
         findObjectsByValue(res, targetVideoId).forEach(item => {
-            // video
+            // video in yt-lockup-view-model
             for (const listItemViewModel of findValuesByKey(item, 'listItemViewModel')) {
                 if (listItemViewModel.title?.content === 'Remove from watch history') {
                     const feedbackToken = findFirstValueByKey(listItemViewModel, 'feedbackToken');
@@ -80,10 +80,23 @@
                 }
             }
 
-            // shorts
+            // shorts in yt-lockup-view-model
             for (const menuServiceItemRenderer of findValuesByKey(item, 'menuServiceItemRenderer')) {
                 if (menuServiceItemRenderer.text?.runs[0]?.text === 'Remove from watch history') {
                     const feedbackToken = findFirstValueByKey(menuServiceItemRenderer, 'feedbackToken');
+                    if (feedbackToken) {
+                        tokens.push(feedbackToken);
+                        break;
+                    }
+                }
+            }
+        });
+
+        // shorts in ytm-shorts-lockup-view-model
+        findObjectsByValue(res, `history-shorts-shelf-item-${targetVideoId}`).forEach(item => {
+            for (const listItemViewModel of findValuesByKey(item, 'listItemViewModel')) {
+                if (listItemViewModel.title?.content === 'Remove from watch history') {
+                    const feedbackToken = findFirstValueByKey(listItemViewModel, 'feedbackToken');
                     if (feedbackToken) {
                         tokens.push(feedbackToken);
                         break;
