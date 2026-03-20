@@ -1,4 +1,4 @@
-# Pretend Not to Watch
+# Remove from watch history button for YouTube Player
 
 A Chrome extension that adds a **Remove from watch history** button to YouTube, letting you remove the currently open video from your watch history without leaving the player page.
 
