@@ -8,6 +8,13 @@ div#metapanel div#_pretend_not_to_watch {
 
 button#_pretend_not_to_watch_button {
     margin: 0 0 0 auto !important;
+    color: var(--yt-spec-text-primary) !important;
+    fill: var(--yt-spec-text-primary) !important;
+    background-color: var(--yt-spec-additive-background) !important;
+}
+
+button#_pretend_not_to_watch_button._pretend_not_to_watch_shorts {
+    background-color: var(--yt-spec-outline-opaque) !important;
 }
 
 div._pretend_not_to_watch_noTarget {
