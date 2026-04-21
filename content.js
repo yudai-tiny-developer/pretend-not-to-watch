@@ -39,6 +39,13 @@ function main(common) {
         button.id = '_pretend_not_to_watch_button';
         if (isShorts) {
             button.classList.add(
+                '_pretend_not_to_watch_shorts',
+                'ytSpecButtonShapeNextHost',
+                'ytSpecButtonShapeNextTonal',
+                'ytSpecButtonShapeNextMono',
+                'ytSpecButtonShapeNextSizeM',
+                'ytSpecButtonShapeNextIconLeading',
+                'ytSpecButtonShapeNextEnableBackdropFilterExperiment',
                 'yt-spec-button-shape-next',
                 'yt-spec-button-shape-next--filled',
                 'yt-spec-button-shape-next--overlay',
@@ -46,6 +53,12 @@ function main(common) {
             );
         } else {
             button.classList.add(
+                'ytSpecButtonShapeNextHost',
+                'ytSpecButtonShapeNextTonal',
+                'ytSpecButtonShapeNextMono',
+                'ytSpecButtonShapeNextSizeM',
+                'ytSpecButtonShapeNextIconLeading',
+                'ytSpecButtonShapeNextEnableBackdropFilterExperiment',
                 'yt-spec-button-shape-next',
                 'yt-spec-button-shape-next--tonal',
                 'yt-spec-button-shape-next--mono',
