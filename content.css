@@ -13,8 +13,18 @@ button#_pretend_not_to_watch_button {
     background-color: var(--yt-spec-additive-background) !important;
 }
 
+html[color-version="v2_0"] button#_pretend_not_to_watch_button {
+    color: var(--yt-sys-color-baseline--text-primary) !important;
+    fill: var(--yt-sys-color-baseline--text-primary) !important;
+    background-color: var(--yt-sys-color-baseline--additive-background) !important;
+}
+
 button#_pretend_not_to_watch_button._pretend_not_to_watch_shorts {
     background-color: var(--yt-spec-outline-opaque) !important;
+}
+
+html[color-version="v2_0"] button#_pretend_not_to_watch_button._pretend_not_to_watch_shorts {
+    background-color: var(--yt-sys-color-baseline--outline-opaque) !important;
 }
 
 div._pretend_not_to_watch_noTarget {
